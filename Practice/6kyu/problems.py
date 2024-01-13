@@ -11,22 +11,12 @@ def fortune(f0, p, c0, n, i):
     for year in range(n):
         finalAmount = finalAmount + (finalAmount * gainInterest) - finalExpense
         finalExpense = finalExpense + (finalExpense * withdrawInterest)
-        # print({'year': year, 'amount': finalAmount, 'expense': finalExpense})
 
     return finalAmount > 0
 
 
 result = fortune(100000, 1, 2000, 15, 1)
 
-
-# print(result)
-
-# RECTANGLES INTO SQUARE
-
-# [5,3] -> 3
-# [3, 2] -> 2
-# [2,1] -> 1
-# [1,1] -> 1
 
 def sq_in_rect(lng, wdth):
     if lng == wdth:

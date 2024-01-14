@@ -58,7 +58,7 @@ def syllabus_words_importance(syllabus_words, important_words):
 
 
 # SECTION - WHAT'S ALLOWED ON THE EXAMS
-demo_exam_guidelines = {'Allowed': {'Online Resources': ['Google', 'Practice Exam Solutions'],
+demo_exam_guidelines = {'Allowed': {'Online Resources': ['Google', 'practice Exam Solutions'],
                                     'Physical Resources': ['Snacks'],
                                     'Technology': ['One Computer'],
                                     'Environment': ['Cats Making Noise', 'Music With Headphones'],

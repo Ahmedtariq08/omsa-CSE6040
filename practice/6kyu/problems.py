@@ -68,10 +68,20 @@ def bouncing_ball(h, bounce, window):
     while h > window:
         seeingTotal += 1
         h = h * bounce
-        print(h)
 
 
     return seeingTotal
 
 bounceResult = bouncing_ball(30, 0.75, 1.5)
-print(bounceResult)
+# print(bounceResult)
+
+
+# SECTION - FIBONACCI
+def fibonacci(num):
+    if num < 2:
+        return num
+    else:
+        return fibonacci(num - 1) + fibonacci(num - 2)
+
+
+print(fibonacci(6))

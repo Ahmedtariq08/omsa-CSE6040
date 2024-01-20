@@ -1,5 +1,4 @@
 # BANKERS PROBLEM
-import math
 
 
 def fortune(f0, p, c0, n, i):
@@ -37,6 +36,8 @@ def sq_in_rect(lng, wdth):
 
 
 sqArr = sq_in_rect(20, 14)
+
+
 # print(sqArr)
 
 # MULTIPLES OF 3 AND 5
@@ -54,7 +55,10 @@ def solution(number):
 
     return totalSum
 
+
 total = solution(10)
+
+
 # print(total)
 
 
@@ -69,10 +73,12 @@ def bouncing_ball(h, bounce, window):
         seeingTotal += 1
         h = h * bounce
 
-
     return seeingTotal
 
+
 bounceResult = bouncing_ball(30, 0.75, 1.5)
+
+
 # print(bounceResult)
 
 
@@ -84,4 +90,19 @@ def fibonacci(num):
         return fibonacci(num - 1) + fibonacci(num - 2)
 
 
-print(fibonacci(6))
+def fib(n):
+    allFibs = []
+    for i in range(1000):
+        if i < 2:
+            allFibs.append(1)
+        else:
+            fibSeq = allFibs[i - 1] + allFibs[i - 2]
+            if fibSeq < n:
+                allFibs.append(fibSeq)
+            else:
+                break
+
+    return sum([x for x in allFibs if x % 2 == 0])
+
+
+print(fib(2))

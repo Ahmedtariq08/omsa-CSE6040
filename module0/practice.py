@@ -1,4 +1,5 @@
 import statistics
+from itertools import accumulate
 
 
 def cumulative_sum(lst):
@@ -46,13 +47,13 @@ def compress_vector(x):
             d['inds'].append(index)
             d['vals'].append(value)
 
-    return d
+    dict = {'inds': [j for j in range(len(x)) if x[j] != 0], 'vals': [i for i in x if i != 0]}
+    return dict
 
 
 x = [0.0, 0.87, 0.0, 0.0, 0.0, 0.32, 0.46, 0.0, 0.0, 0.10, 0.0, 0.0]
 
-
-# print(compress_vector(x))
+print(compress_vector(x))
 
 
 def decompress_vector(d, n=None):
@@ -153,4 +154,31 @@ def get_ranked_students(grades):
     return list(dict(sorted(studentAvgDict.items(), key=lambda x: x[1], reverse=True)).keys())
 
 
-print(get_ranked_students(grades))
+# print(get_ranked_students(grades))
+
+
+# SECTION === TOPIC 1 ===
+
+def maxStockProfit(prices):
+    minPrices = list(accumulate(prices, func=min))
+    return max([sell - bestBuy for sell, bestBuy in zip(prices, minPrices)])
+
+
+testArray = [13, 11, 10, 8, 5, 9, 6, 7, 7, 10, 4, 3]
+# print(maxStockProfit(testArray))
+
+# SECTION === MORE EXERCISES ===
+
+A = [2, 16, 26, 32, 52, 71, 80, 88]
+
+
+def ordered_contains(S, x):
+    firstNum = S[0]
+    lastNum = S[-1]
+    if x < firstNum or x > lastNum:
+        return False
+
+    if (abs(lastNum - x) > abs(x - firstNum)):
+        return x in S
+    else:
+        return x in S[::-1]

@@ -53,7 +53,8 @@ def compress_vector(x):
 
 x = [0.0, 0.87, 0.0, 0.0, 0.0, 0.32, 0.46, 0.0, 0.0, 0.10, 0.0, 0.0]
 
-print(compress_vector(x))
+
+# print(compress_vector(x))
 
 
 def decompress_vector(d, n=None):
@@ -157,8 +158,6 @@ def get_ranked_students(grades):
 # print(get_ranked_students(grades))
 
 
-# SECTION === TOPIC 1 ===
-
 def maxStockProfit(prices):
     minPrices = list(accumulate(prices, func=min))
     return max([sell - bestBuy for sell, bestBuy in zip(prices, minPrices)])
@@ -182,3 +181,13 @@ def ordered_contains(S, x):
         return x in S
     else:
         return x in S[::-1]
+
+
+def UniqueCharacters(s):
+    letters = set([c for c in s if c.isalpha()])
+    numbers = set([int(c) for c in s if c.isdigit()])
+    return len(letters), len(numbers)
+
+
+str = 'ewwwffioj122434'
+print(UniqueCharacters(str))

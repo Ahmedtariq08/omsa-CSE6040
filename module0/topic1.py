@@ -71,19 +71,24 @@ def decompress_vector(d, n=None):
     else:
         assert n > i_max, "Bad value for full vector length"
 
-    output = []
-    for i in range(n):
-        indices = [index for index, value in enumerate(d['inds']) if value == i]
-        values = [d['vals'][ind] for ind in indices]
-        output.append(float(sum(values)))
+    y = [0] * n
+    for k, v in zip(d['inds'], d['vals']):
+        y[k] += v
 
-    return output
+    return y
+
+    # output = []
+    # for i in range(n):
+    #     indices = [index for index, value in enumerate(d['inds']) if value == i]
+    #     values = [d['vals'][ind] for ind in indices]
+    #     output.append(float(sum(values)))
+    #
+    # return output
 
 
 d = {'inds': [0, 3, 7, 3, 3, 5, 1], 'vals': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]}
 
-
-# print(decompress_vector(d, None))
+print(decompress_vector(d, None))
 
 
 def find_common_inds(d1, d2):

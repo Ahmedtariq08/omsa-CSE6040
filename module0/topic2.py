@@ -90,7 +90,7 @@ def download(file, local_dir="", url_base=None, checksum=None):
 if on_vocareum():
     DATA_PATH = "./resource/asnlib/publicdata/"
 else:
-    DATA_PATH = "/home/gosaas/PycharmProjects/pythonProject/module0/topic2/"
+    DATA_PATH = "../datasets/"
 datasets = {'groceries.csv': '0a3d21c692be5c8ce55c93e59543dcbe'}
 
 # for filename, checksum in datasets.items():
@@ -127,3 +127,4 @@ def get_basket_rules():
 
 
 basket_rules = get_basket_rules()
+print(len(basket_rules))

@@ -103,6 +103,3 @@ def fib(n):
                 break
 
     return sum([x for x in allFibs if x % 2 == 0])
-
-
-print(fib(2))

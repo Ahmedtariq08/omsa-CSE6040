@@ -6,7 +6,6 @@ def eval_strint(s, base=2):
     assert 2 <= base <= 36
     # My own algorithm for strings with digits only
     # return sum([int(s[i]) * base ** (len(s) - i - 1) for i in range(len(s))])
-
     return int(s, base)
 
 
@@ -38,9 +37,10 @@ def eval_strfrac(s, base=2):
 
     int_value = 0
     for digit in integer_part:
-        if digit not in digit_map or digit_map[digit] >= base:
+        digitToFind = digit.lower() if digit.isalpha() else digit
+        if digitToFind not in digit_map or digit_map[digitToFind] >= base:
             raise ValueError("Invalid digit in integer part")
-        int_value = int_value * base + digit_map[digit]
+        int_value = int_value * base + digit_map[digitToFind]
 
     dec_value = 0
     if fractional_part:
@@ -90,11 +90,41 @@ def eval_fp(sign, significand, exponent, base=2):
     assert type(exponent) is int
     val = eval_strfrac(significand, base) * base ** exponent
     signedVal = val if sign == '+' else -1 * val
-    print(signedVal)
     return signedVal
+
 
 # eval_fp('-', '1.25000', -1, base=10)  # 0.125
 # eval_fp('+', '1.20100202211020211211', 4, 3)  # 138.25708894296503
 # eval_fp('+', '1.10101110101100100101001111000101', -5, 2)  # 0.05257526742207119
 # eval_fp('-', '2.G0EBPT', -1, 32)  # -0.0781387033930514
 # eval_fp('-', '2.5M2M01E', 4, 23)  # -632223.0030410126
+# eval_fp('-', 'C.DF02BC3', -2, 16)  # -0.0502778729860438
+
+
+### Exercise
+def add_fp_bin(u, v, signif_bits):
+    u_sign, u_signif, u_exp = u
+    v_sign, v_signif, v_exp = v
+    # You may assume normalized inputs at the given precision, `signif_bits`.
+    assert u_signif[:2] in {'1.', '0.'} and len(u_signif) == (signif_bits + 1)
+    assert v_signif[:2] in {'1.', '0.'} and len(v_signif) == (signif_bits + 1)
+    f1 = eval_fp(u[0], u[1], u[2], 2)
+    f2 = eval_fp(v[0], v[1], v[2], 2)
+    s = f1 + f2
+    bs = fp_bin(s)
+    nbs = (bs[0], bs[1][:signif_bits + 1], bs[2])
+    return nbs
+
+
+# These calls to `add_fp_bin` will raise an Assertion error if your solution does not
+# return the expected result.
+
+u = ('+', '1.010010', 0)
+v = ('-', '1.000000', -2)
+add_fp_bin(u, v, 7)
+assert add_fp_bin(u, v, 7) == ('+', '1.000010', 0)
+
+u = ('+', '1.00000', 0)
+v = ('-', '1.00000', -6)
+add_fp_bin(u, v, 6)
+assert add_fp_bin(u, v, 6) == ('+', '1.11111', -1)

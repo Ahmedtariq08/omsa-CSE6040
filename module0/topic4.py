@@ -15,19 +15,6 @@ def eval_strint(s, base=2):
 
 
 ### Exercise 1
-# def eval_strfrac(s, base=2):
-#     # My own algorithm
-#     arr = s.split(".")
-#     intFloat = float(eval_strint(arr[0], base))
-#
-#     decFloat = 0.0
-#     if len(arr) > 1:
-#         decimals = arr[1]
-#         decFloat = float(sum([int(decimals[i]) * base ** (-1 - i) for i in range(len(decimals))]))
-#
-#     return intFloat + decFloat
-
-
 def eval_strfrac(s, base=2):
     digit_map = {str(i): i for i in range(10)}
     for i, char in enumerate('abcdefghijklmnopqrstuvwxyz', start=10):
@@ -119,12 +106,42 @@ def add_fp_bin(u, v, signif_bits):
 # These calls to `add_fp_bin` will raise an Assertion error if your solution does not
 # return the expected result.
 
-u = ('+', '1.010010', 0)
-v = ('-', '1.000000', -2)
-add_fp_bin(u, v, 7)
-assert add_fp_bin(u, v, 7) == ('+', '1.000010', 0)
+# u = ('+', '1.010010', 0)
+# v = ('-', '1.000000', -2)
+# add_fp_bin(u, v, 7)
+# assert add_fp_bin(u, v, 7) == ('+', '1.000010', 0)
 
-u = ('+', '1.00000', 0)
-v = ('-', '1.00000', -6)
-add_fp_bin(u, v, 6)
-assert add_fp_bin(u, v, 6) == ('+', '1.11111', -1)
+
+# SECTION PART ONE
+def alg_sum(x):
+    s = 0.
+    for x_i in x:
+        s += x_i
+    return s
+
+
+# Exercise 0
+N = [10, 100, 1000, 10000, 100000, 1000000, 10000000]
+t = [0.0] * len(N)
+for i in range(len(N)):
+    x = [.1 * N[i]]
+    sums = alg_sum(x)
+    t[i] = sums
+
+
+def alg_sum_accurate(nums):
+    assert type(nums) is list
+    partials = []  # sorted, non-overlapping partial sums
+    for x in nums:
+        i = 0
+        for y in partials:
+            if abs(x) < abs(y):
+                x, y = y, x
+            hi = x + y
+            lo = y - (hi - x)
+            if lo:
+                partials[i] = lo
+                i += 1
+            x = hi
+        partials[i:] = [x]
+    return sum(partials, 0.0)

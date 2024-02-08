@@ -93,6 +93,9 @@ pattern4 = re.compile(
     r'M(r|s|rs)\.?\s[A-Z]\w*')  # ? says that '.' is optional, \s is for space, [A-Z]
 # means we want capital letter after space, \w* means that we need to sto before next word break
 
+# matching emails
+pattern5 = re.compile(r'M(r|s|rs)\.?\s[A-Z]\w*')
+
 matches = pattern4.finditer(text_to_search)
 for match in matches:
     print(match)

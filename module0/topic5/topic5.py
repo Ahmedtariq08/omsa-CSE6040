@@ -1,5 +1,10 @@
 # SECTION NOTEBOOK 5
+import html
 import re
+
+from bs4 import BeautifulSoup
+
+from module0.common import printJson
 
 
 # Exercise 0
@@ -100,7 +105,52 @@ def parse_phone(s):
     return areaCode, firstThree, lastFour
 
 
-### demo function call
-for demo_str_ex3 in demo_str_ex3_list:
-    print(
-        f"eif_wrapper('{demo_str_ex3}', parse_phone2) -> {eif_wrapper(demo_str_ex3, parse_phone2)}")
+# ## demo function call for demo_str_ex3 in demo_str_ex3_list: print( f"eif_wrapper('{
+# demo_str_ex3}', parse_phone2) -> {eif_wrapper(demo_str_ex3, parse_phone2)}")
+
+# SECTION pART 1
+
+# parsing html file:
+# pick <li> with class="regular-search-result"
+# pick <span> with class="indexed-biz-name", this will give ranking and name
+# pick <span> with class="review-count rating-qualifier" for reviews, convert to numrevs
+# pick <span> with class="business-attribute price-range" for price range $$
+
+def parseHtml(yelp_html):
+    soup = BeautifulSoup(yelp_html, "html.parser")
+
+    result = []
+    allListTags = soup.find_all('li', class_='regular-search-result')
+    for tag in allListTags:
+        obj = {}
+
+        # finding the name
+        anchor = tag.find_next('a', class_='biz-name js-analytics-click')
+        if anchor:
+            obj['name'] = html.escape(anchor.find_next("span").get_text().strip())
+
+        # finding the stars
+        div = tag.find_next('div', class_='biz-rating biz-rating-large clearfix')
+        if div:
+            obj['stars'] = div.find_next("img").get("alt")[:3]
+
+        result.append(obj)
+
+        # finding numrevs
+        revs = div.find_next('span', class_='review-count rating-qualifier')
+        if revs:
+            text = revs.get_text().strip().split(" ")[0]
+            obj['numrevs'] = int(text)
+
+        # finding price
+        price = tag.find_next('span', class_='business-attribute price-range')
+        if price:
+            obj['price'] = price.get_text().strip()
+
+    return result
+
+
+with open('../../datasets/topic5.html', 'r', encoding='utf-8') as yelp_file:
+    yelp_html = yelp_file.read()
+    res = parseHtml(yelp_html)
+    printJson(res)

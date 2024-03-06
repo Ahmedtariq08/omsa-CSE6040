@@ -61,4 +61,34 @@ query = '''
 
 c.execute(query)
 results2 = c.fetchall()
-print(results2)
+
+
+
+### PART 1
+
+# Exercise 1
+queryp1 = '''
+  SELECT LOWER(ComplaintType) AS type, COUNT(*) AS freq
+    FROM data
+    GROUP BY LOWER(ComplaintType)
+    ORDER BY freq DESC
+'''
+
+queryp2 = '''
+  SELECT name, freq
+    FROM (SELECT LOWER(ComplaintType) AS type, COUNT(*) AS freq, UPPER(City) AS name 
+        FROM data
+        GROUP BY name
+        ORDER BY -freq)
+    LIMIT 10
+'''
+
+
+def strs_to_args(str_list):
+    assert type (str_list) is list
+    assert all ([type (s) is str for s in str_list])
+    return ", ".join(['"{}"'.format(x) for x in str_list])
+
+
+str_list = ['a', 'b', 'c', 'd']
+print(strs_to_args(str_list))

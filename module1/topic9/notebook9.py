@@ -20,6 +20,7 @@ conn.commit()
 c.execute('DROP TABLE IF EXISTS Takes')
 c.execute('CREATE TABLE Takes (gtid INTEGER, course TEXT, grade REAL)')
 
+
 def getIdFromName(name):
     c.execute("SELECT gtid FROM Students WHERE name = '{}'".format(name))
     return c.fetchone()[0]
@@ -31,7 +32,7 @@ ChauId = getIdFromName('Chau')
 
 takes = [(VuducId, 'CSE 6040', 4.0), (VuducId, 'ISYE 6644', 3.0), (VuducId, 'MGMT 8803', 1.0),
          (SokolId, 'CSE 6040', 4.0), (SokolId, 'ISYE 6740', 4.0),
-         (ChauId, 'CSE 6040', 4.0),  (ChauId, 'ISYE 6740', 2.0), (ChauId, 'MGMT 8803', 3.0)]
+         (ChauId, 'CSE 6040', 4.0), (ChauId, 'ISYE 6740', 2.0), (ChauId, 'MGMT 8803', 3.0)]
 
 c.executemany('INSERT INTO Takes VALUES (?, ?, ?)', takes)
 conn.commit()
@@ -50,7 +51,7 @@ query = '''
 
 c.execute(query)
 results1 = c.fetchall()
-#print(results1)
+# print(results1)
 
 # Exercise 3 (2 points)
 query = '''
@@ -62,8 +63,6 @@ query = '''
 c.execute(query)
 results2 = c.fetchall()
 
-
-
 ### PART 1
 
 # Exercise 1
@@ -74,6 +73,7 @@ queryp1 = '''
     ORDER BY freq DESC
 '''
 
+# Exercise 2
 queryp2 = '''
   SELECT name, freq
     FROM (SELECT LOWER(ComplaintType) AS type, COUNT(*) AS freq, UPPER(City) AS name 
@@ -84,11 +84,67 @@ queryp2 = '''
 '''
 
 
+# Exercise 3
 def strs_to_args(str_list):
-    assert type (str_list) is list
-    assert all ([type (s) is str for s in str_list])
+    assert type(str_list) is list
+    assert all([type(s) is str for s in str_list])
     return ", ".join(['"{}"'.format(x) for x in str_list])
 
 
-str_list = ['a', 'b', 'c', 'd']
-print(strs_to_args(str_list))
+# Exercise 4
+TOP_CITIES = ['BROOKLYN',
+              'NEW YORK',
+              'BRONX',
+              'STATEN ISLAND',
+              'JAMAICA',
+              'FLUSHING',
+              'ASTORIA']
+topCitiesString = strs_to_args(TOP_CITIES)
+
+query = '''
+  SELECT LOWER(ComplaintType) AS complaint_type, UPPER(City) AS city_name, COUNT(*) AS complaint_count
+    FROM data
+    WHERE city_name in ({})
+    GROUP BY City COLLATE NOCASE, ComplaintType COLLATE NOCASE
+    ORDER BY -complaint_count
+'''.format(topCitiesString)
+
+# df_complaints_by_city = pd.read_sql_query(query, disk_engine)
+
+
+# Exercise 5
+df_plot_fraction = top_complaints.merge(df_complaints_by_city,
+                                        left_on=['type'],
+                                        right_on=['complaint_type'],
+                                        how='left')
+
+df_plot_fraction['complaint_frac'] = df_plot_fraction['complaint_count'] / df_plot_fraction['freq']
+df_plot_fraction.drop(['complaint_count'], axis=1, inplace=True)
+df_plot.dropna(inplace=True)
+df_plot_fraction.head()
+
+# Exercise 6
+query = '''
+  SELECT hour, COUNT(hour) AS count
+    FROM (SELECT STRFTIME('%H', CreatedDate) AS hour FROM data)
+    GROUP BY hour
+'''
+
+df_complaints_by_hour = pd.read_sql_query(query, disk_engine)
+
+# Displays your answer:
+display(df_complaints_by_hour)
+
+# Exercise 7
+query = '''
+  SELECT hour, COUNT(hour) AS count
+    FROM (SELECT STRFTIME('%H', CreatedDate) AS hour, 
+          STRFTIME('%H:%M:%f', CreatedDate) AS time,
+          LOWER(ComplaintType) AS type
+          FROM data)
+    WHERE type LIKE '%noise%' AND time != '00:00:00.000'
+    GROUP BY hour
+'''
+
+df_noisy_by_hour = pd.read_sql_query(query, disk_engine)
+display(df_noisy_by_hour)

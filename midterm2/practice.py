@@ -7,16 +7,20 @@
 # Import required modules
 # Feel free to import anything else you find useful
 import pandas as pd
-import dill as pickle
+#import dill as pickle
 from io import StringIO
 # from matplotlib import pyplot as plt
 import numpy as np
 from scipy.stats import norm
+
 # from football_utils import *
 
 # loading the raw data
 # with open('datasets\midterm2\\all_events_df.pkl', 'rb') as f:
 #     all_events_df = pickle.load(f)
+
+arr = np.array([1, 2, 3])
+
 
 def convert_string_to_dataframe(data_str):
     data_str = data_str.strip()
@@ -26,10 +30,11 @@ def convert_string_to_dataframe(data_str):
 
     for line in lines[1:]:
         values = [x.strip() for x in line.split('\t')[1:]]
-        if (len(values) == len(column_names)):
+        if len(values) == len(column_names):
             df.loc[len(df)] = values
 
     return df
+
 
 # Exercise 0 (2 p0ints)
 data = {
@@ -52,6 +57,7 @@ data = {
 
 all_events_df = pd.DataFrame(data)
 
+
 def calc_time_left(all_events_df: pd.DataFrame) -> pd.DataFrame:
     newDf = all_events_df.copy()
 
@@ -64,59 +70,68 @@ def calc_time_left(all_events_df: pd.DataFrame) -> pd.DataFrame:
     newDf['timeLeft'] = newDf.apply(performCalculation, axis=1)
     return newDf
 
-#print(calc_time_left(all_events_df))
+
+# print(calc_time_left(all_events_df))
 
 # Exercise 1 (2 points)
 data2 = {
-    'type': ['Punt', 'Two Point Rush', 'Two-minute warning', 'Rush', 'Timeout', 'Rush', 'End Period', 'Rushing Touchdown', 'Timeout', 'Timeout', 'Pass Reception', 'Pass Reception', 'Extra Point Good', 'Rush', 'Pass Reception', 'Timeout', 'Two-minute warning', 'Pass Reception'],
+    'type': ['Punt', 'Two Point Rush', 'Two-minute warning', 'Rush', 'Timeout', 'Rush', 'End Period',
+             'Rushing Touchdown', 'Timeout', 'Timeout', 'Pass Reception', 'Pass Reception', 'Extra Point Good', 'Rush',
+             'Pass Reception', 'Timeout', 'Two-minute warning', 'Pass Reception'],
     'timeLeft': [-830, 0, 1920, 976, 332, 3533, 900, 3165, 1533, 51, -473, -317, 3214, 792, -235, -894, 1920, 926],
-    'event_id': [401127999, 400874631, 401437889, 401220231, 400951744, 401127999, 401220213, 400554399, 401249063, 401437866, 400951562, 400874555, 401326418, 400874553, 400874621, 401030770, 401220292, 401437633]
+    'event_id': [401127999, 400874631, 401437889, 401220231, 400951744, 401127999, 401220213, 400554399, 401249063,
+                 401437866, 400951562, 400874555, 401326418, 400874553, 400874621, 401030770, 401220292, 401437633]
 }
 
-demo_df_ex1 = pd.DataFrame(data2) 
+demo_df_ex1 = pd.DataFrame(data2)
+
 
 def filter_non_plays_and_ot(df: pd.DataFrame) -> pd.DataFrame:
     non_play_types = ['Penalty', 'End Period', 'Two-minute warning', 'Timeout', 'End of Half',
-                      'End of Game', 'Official Timeout', 'Defensive 2pt Conversion', 
+                      'End of Game', 'Official Timeout', 'Defensive 2pt Conversion',
                       'Two Point Rush', 'Extra Point Good']
-    
+
     ot_event_ids = df[df['timeLeft'] < 0]['event_id']
     newDf = df[(~df['type'].isin(non_play_types)) & (~df['event_id'].isin(ot_event_ids.values))]
     return newDf
-    
-    
+
+
 # Exercise 2 (2 points)
 data3 = {
-    'drive_id': [4014356414, 4014356414, 4014356414, 4014356414, 4014356414, 4014356414, 
-                 4014356418, 4014356418, 4014356418, 4014356418, 4014356418, 4014356418, 
+    'drive_id': [4014356414, 4014356414, 4014356414, 4014356414, 4014356414, 4014356414,
+                 4014356418, 4014356418, 4014356418, 4014356418, 4014356418, 4014356418,
                  4014356411, 4014356411, 4014356411, 4014356411, 4014356411],
-    'type': ['Pass Reception', 'Rush', 'Rush', 'Rush', 'Pass Reception', 'Passing Touchdown', 
-             'Pass Incompletion', 'Rush', 'Rush', 'Pass Incompletion', 'Pass Reception', 'Field Goal Good', 
+    'type': ['Pass Reception', 'Rush', 'Rush', 'Rush', 'Pass Reception', 'Passing Touchdown',
+             'Pass Incompletion', 'Rush', 'Rush', 'Pass Incompletion', 'Pass Reception', 'Field Goal Good',
              'Kickoff Return (Offense)', 'Pass Incompletion', 'Rush', 'Sack', 'Punt'],
-    'scoringPlay': [False, False, False, False, False, True, False, False, False, False, False, True, False, False, False, False, False],
+    'scoringPlay': [False, False, False, False, False, True, False, False, False, False, False, True, False, False,
+                    False, False, False],
     'down': [1, 2, 2, 1, 2, 3, 1, 2, 1, 2, 3, 4, 0, 1, 2, 3, 4],
     'timeLeft': [3336, 3304, 3288, 3248, 3207, 3160, 2452, 2448, 2412, 2370, 2362, 2323, 3600, 3594, 3589, 3547, 3515]
 }
 
 demo_event_df_ex2 = pd.DataFrame(data3)
 
+
 ### Helper function provided as part of the starter code
 def converted_by_drive(group: pd.DataFrame) -> pd.DataFrame:
-    group = group.sort_values('timeLeft', ascending=False)\
+    group = group.sort_values('timeLeft', ascending=False) \
         .reset_index(drop=True)
-    offensive_touchdown_types = ['Passing Touchdown', 'Rushing Touchdown', 
-                             'Fumble Recovery (Own)', 'Rush', 'Pass Reception']
+    offensive_touchdown_types = ['Passing Touchdown', 'Rushing Touchdown',
+                                 'Fumble Recovery (Own)', 'Rush', 'Pass Reception']
     # `pd.DataFrame.shift` might be useful later...
     first_downs = (group['down'] == 1).shift(-1, fill_value=False)
-    scores = (group['scoringPlay'] == True)&(group['type'].isin(offensive_touchdown_types))
-    group['converted'] = (first_downs|scores)
+    scores = (group['scoringPlay'] == True) & (group['type'].isin(offensive_touchdown_types))
+    group['converted'] = (first_downs | scores)
     return group
+
 
 ### Your solution
 def converted(event_df: pd.DataFrame) -> pd.DataFrame:
     df = event_df.groupby('drive_id').apply(lambda x: converted_by_drive(x)).reset_index(drop=True)
     return df
-    
+
+
 # converted(demo_event_df_ex2)
 
 # Exercise 3 (2 points)
@@ -132,39 +147,46 @@ demo_event_df_ex3 = convert_string_to_dataframe('''awayScore	homeScore	homeTeamP
 142	6	26	True	66
 143	6	26	True	31''')
 
+
 ### Exercise 3 solution
 def who_won(event_df: pd.DataFrame) -> pd.DataFrame:
     df = event_df.copy()
     homeMax = int(df['homeScore'].max())
     awayMax = int(df['awayScore'].max())
-    
+
     def checkWhoWon(row):
         offense = True if row['homeTeamPoss'] == "True" else False
         return offense if homeMax > awayMax else not offense
-       
-    
+
     df['won'] = df.apply(checkWhoWon, axis=1)
     return df
-    
+
 
 # Exercise 4 (3 points)
 
 data4 = {
-    'awayScore': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 10, 10, 13, 13, 13, 13, 13, 13, 16, 16, 16, 16, 16, 16],
+    'awayScore': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 10, 10, 13, 13, 13, 13, 13, 13, 16, 16, 16, 16, 16,
+                  16],
     'homeScore': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 14, 14],
-    'timeLeft': [3477, 3358, 3239, 3115, 3002, 2885, 2767, 2650, 2534, 2413, 2299, 2182, 2065, 1949, 1826, 1707, 1594, 1471, 1348, 1230, 1106, 987, 867, 746, 625, 503, 383, 265, 147, 26],
-    'scoringPlay': [False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, True, False, True, False, False, False, True, False, True, False, False, False, True, False],
-    'homeTeamPoss': [False, True, True, True, False, False, False, True, False, False, False, False, True, True, True, True, True, True, False, True, True, True, False, True, True, False, False, True, True, True]
+    'timeLeft': [3477, 3358, 3239, 3115, 3002, 2885, 2767, 2650, 2534, 2413, 2299, 2182, 2065, 1949, 1826, 1707, 1594,
+                 1471, 1348, 1230, 1106, 987, 867, 746, 625, 503, 383, 265, 147, 26],
+    'scoringPlay': [False, False, False, False, False, False, False, False, False, False, True, False, False, False,
+                    False, False, True, False, True, False, False, False, True, False, True, False, False, False, True,
+                    False],
+    'homeTeamPoss': [False, True, True, True, False, False, False, True, False, False, False, False, True, True, True,
+                     True, True, True, False, True, True, True, False, True, True, False, False, True, True, True]
 }
 
 demo_event_df_ex4 = pd.DataFrame(data4)
+
 
 def get_update_list(df: pd.DataFrame) -> list:
     scoring = df.loc[df['scoringPlay'], ['awayScore', 'homeScore']]
     scoring[['previousAway', 'previousHome']] = scoring.shift(1, fill_value=0)
     scoring['next_score'] = (scoring['homeScore'] - scoring['previousHome']) - \
                             (scoring['awayScore'] - scoring['previousAway'])
-    return [(0, 0), *[(k+1, v) for k, v in scoring['next_score'].to_dict().items()], (len(df), 0)]
+    return [(0, 0), *[(k + 1, v) for k, v in scoring['next_score'].to_dict().items()], (len(df), 0)]
+
 
 # with open('resource/asnlib/publicdata/demo_output_ex4.pkl', 'rb') as f:
 #     true_demo_output_ex4 = pickle.load(f)
@@ -180,27 +202,21 @@ def add_next_score(event_df: pd.DataFrame) -> pd.DataFrame:
 
     def get_zipped_array(update_list, i):
         score = update_list[i + 1][1]
-        rng = list(range(update_list[i][0], update_list[i+1][0])) 
+        rng = list(range(update_list[i][0], update_list[i + 1][0]))
         arr = list(zip(rng, [score] * len(rng)))
         return arr
-
 
     output = []
     for i in range(len(update_list) - 1):
         output += get_zipped_array(update_list, i)
-     
-    #test1 = [range(update_list[i][0], update_list[i+1][0]) for i in range(len(update_list) - 1)]
+
+    # test1 = [range(update_list[i][0], update_list[i+1][0]) for i in range(len(update_list) - 1)]
     test1 = [get_zipped_array(update_list, i) for i in range(len(update_list) - 1)]
     print(output)
     print(len(output))
-   
+
     return df
-    
 
 
 demo_output_ex4 = add_next_score(demo_event_df_ex4)
-#print(demo_output_ex4)
-
-
-
-
+# print(demo_output_ex4)
